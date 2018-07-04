@@ -1,0 +1,25 @@
+<schemalist gettext-domain="gnome-shell-extensions-prometheus-notifier">
+  <schema id="org.gnome.shell.extensions.prometheus-notifier" path="/org/gnome/shell/extensions/prometheus-notifier/">
+    <key name="url" type="s">
+      <default>''</default>
+      <summary>Alertmanager URL.</summary>
+      <description>For example: "http://alertmanager.example.net:9093".</description>
+    </key>
+    <key name="receiver-filter" type="s">
+      <default>''</default>
+      <summary>Receiver filter.</summary>
+      <description>Filter alerts by receiver with regular expression.</description>
+    </key>
+    <key name="update-interval" type="i">
+      <default>60</default>
+      <summary>Update alerts list interval.</summary>
+      <description>Interval between requests to Alertmanager API.</description>
+    </key>
+    <key name="last-update" type="i">
+      <default>0</default>
+      <summary>Last update time.</summary>
+      <description>Unix timestamp of last loaded data.</description>
+    </key>
+  </schema>
+</schemalist>
+

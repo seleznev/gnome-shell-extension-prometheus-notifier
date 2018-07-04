@@ -1,0 +1,8 @@
+{
+  "uuid": "prometheus-notifier@slznv.net",
+  "settings-schema": "org.gnome.shell.extensions.prometheus-notifier",
+  "gettext-domain": "gnome-shell-extensions-prometheus-notifier",
+  "name": "Prometheus Notifier",
+  "description": "Simple notifier about alerts from Prometheus",
+  "shell-version": ["3.26"]
+}
