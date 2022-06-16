@@ -67,8 +67,9 @@ const PrometheusNotifierMenu = new Lang.Class({
         // Menu
         this.menu.addAction(_("Alertmanager"), function(event) {
             let base_url = Settings.get_string('url') || ''; // TODO: need better default value
+            let filter = Settings.get_string('label-filter').replace(/"/g, '\\"') || ''
             let receiver_regex = Settings.get_string('receiver-filter') || ''
-            let alertmanager_url = base_url + '/#/alerts?silenced=false&inhibited=false&unprocessed=false&receiver=' + encodeURI(receiver_regex);
+            let alertmanager_url = base_url + '/#/alerts?silenced=false&inhibited=false&unprocessed=false&filter=' + filter + '&receiver=' + encodeURI(receiver_regex);
 
             GLib.spawn_command_line_async('xdg-open ' + alertmanager_url);
         });
@@ -87,8 +88,9 @@ const PrometheusNotifierMenu = new Lang.Class({
 
     _checkAlerts: function() {
         let base_url = Settings.get_string('url') || ''; // TODO: need better default value
+        let filter = Settings.get_string('label-filter') || ''
         let receiver_regex = Settings.get_string('receiver-filter') || ''
-        let api_url = base_url + '/api/v1/alerts?silenced=false&inhibited=false&unprocessed=false&receiver=' + encodeURI(receiver_regex);
+        let api_url = base_url + '/api/v1/alerts?silenced=false&inhibited=false&unprocessed=false&filter=' + filter + '&receiver=' + encodeURI(receiver_regex);
 
         this._httpGetRequestAsync(api_url, function(json) {
             let last_update = new Date((Settings.get_int('last-update') || 0) * 1000);
