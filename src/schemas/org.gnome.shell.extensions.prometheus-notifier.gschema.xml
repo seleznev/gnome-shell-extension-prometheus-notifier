@@ -5,6 +5,11 @@
       <summary>Alertmanager URL.</summary>
       <description>For example: "http://alertmanager.example.net:9093".</description>
     </key>
+    <key name="label-filter" type="s">
+      <default>''</default>
+      <summary>Label filter.</summary>
+      <description>Filter alerts by label matchers.</description>
+    </key>
     <key name="receiver-filter" type="s">
       <default>''</default>
       <summary>Receiver filter.</summary>

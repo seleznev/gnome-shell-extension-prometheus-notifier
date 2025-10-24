@@ -54,6 +54,19 @@ const PrometheusNotifierPrefsWidget = new GObject.Class({
         this._settings = Convenience.getSettings();
         this._settings.bind('url', url_entry, 'text', Gio.SettingsBindFlags.DEFAULT);
 
+        // Label filter
+        this.add(new Gtk.Label({ label: '<b>' + _("Label filter (labels matchers)") + '</b>',
+                                 use_markup: true,
+                                 halign: Gtk.Align.START }));
+
+        let filter_entry = new Gtk.Entry({ hexpand: true,
+                                           margin_bottom: 12 });
+        this.add(filter_entry);
+
+        this._settings = Convenience.getSettings();
+        this._settings.bind('label-filter', filter_entry, 'text',
+                            Gio.SettingsBindFlags.DEFAULT);
+
         // Receiver filter
         this.add(new Gtk.Label({ label: '<b>' + _("Receiver filter (regex)") + '</b>',
                                  use_markup: true,
