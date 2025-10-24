@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Aleksandr Seleznev <alex@slznv.net>
+ * Copyright (C) 2018-2025 Aleksandr Seleznev <alex@slznv.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,32 +15,20 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-const GLib = imports.gi.GLib;
-const GObject = imports.gi.GObject;
-const Gio = imports.gi.Gio;
-const Gtk = imports.gi.Gtk;
+import Adw from 'gi://Adw';
+import Gio from 'gi://Gio';
+import GObject from 'gi://GObject';
+import Gtk from 'gi://Gtk';
 
-const Gettext = imports.gettext.domain('gnome-shell-extensions-prometheus-notifier');
-const _ = Gettext.gettext;
+import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+class PrometheusNotifierPrefsWidget extends Adw.PreferencesGroup {
+    static {
+        GObject.registerClass(this);
+    }
 
-function init() {
-    Convenience.initTranslations();
-}
-
-const PrometheusNotifierPrefsWidget = new GObject.Class({
-    Name: 'PrometheusNotifier.Prefs.Widget',
-    GTypeName: 'PrometheusNotifierPrefsWidget',
-    Extends: Gtk.Grid,
-
-    _init: function(params) {
-        this.parent(params);
-        this.margin = 12;
-        this.row_spacing = this.column_spacing = 6;
-        this.set_orientation(Gtk.Orientation.VERTICAL);
+    constructor(settings) {
+        super(settings);
 
         // Alertmanager URL
         this.add(new Gtk.Label({ label: '<b>' + _("Alertmanager URL") + '</b>',
@@ -51,8 +39,7 @@ const PrometheusNotifierPrefsWidget = new GObject.Class({
                                         margin_bottom: 12 });
         this.add(url_entry);
 
-        this._settings = Convenience.getSettings();
-        this._settings.bind('url', url_entry, 'text', Gio.SettingsBindFlags.DEFAULT);
+        settings.bind('url', url_entry, 'text', Gio.SettingsBindFlags.DEFAULT);
 
         // Label filter
         this.add(new Gtk.Label({ label: '<b>' + _("Label filter (labels matchers)") + '</b>',
@@ -63,8 +50,7 @@ const PrometheusNotifierPrefsWidget = new GObject.Class({
                                            margin_bottom: 12 });
         this.add(filter_entry);
 
-        this._settings = Convenience.getSettings();
-        this._settings.bind('label-filter', filter_entry, 'text',
+        settings.bind('label-filter', filter_entry, 'text',
                             Gio.SettingsBindFlags.DEFAULT);
 
         // Receiver filter
@@ -76,8 +62,7 @@ const PrometheusNotifierPrefsWidget = new GObject.Class({
                                              margin_bottom: 12 });
         this.add(receiver_entry);
 
-        this._settings = Convenience.getSettings();
-        this._settings.bind('receiver-filter', receiver_entry, 'text',
+        settings.bind('receiver-filter', receiver_entry, 'text',
                             Gio.SettingsBindFlags.DEFAULT);
 
         // Update interval
@@ -95,14 +80,12 @@ const PrometheusNotifierPrefsWidget = new GObject.Class({
                                                          margin_bottom: 12 });
         this.add(update_interval_entry);
 
-        this._settings = Convenience.getSettings();
-        this._settings.bind('update-interval', update_interval_entry, 'value', Gio.SettingsBindFlags.DEFAULT);
+        settings.bind('update-interval', update_interval_entry, 'value', Gio.SettingsBindFlags.DEFAULT);
     }
-});
+}
 
-function buildPrefsWidget() {
-    let widget = new PrometheusNotifierPrefsWidget();
-    widget.show_all();
-
-    return widget;
+export default class PrometheusNotifierExtensionPreferences extends ExtensionPreferences {
+    getPreferencesWidget() {
+        return new PrometheusNotifierPrefsWidget(this.getSettings());
+    }
 }

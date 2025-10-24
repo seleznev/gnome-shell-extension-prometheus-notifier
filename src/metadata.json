@@ -4,5 +4,7 @@
   "gettext-domain": "gnome-shell-extensions-prometheus-notifier",
   "name": "Prometheus Notifier",
   "description": "Simple notifier about alerts from Prometheus",
-  "shell-version": ["3.36"]
+  "shell-version": [
+    "46"
+  ]
 }
