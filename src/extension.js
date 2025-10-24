@@ -66,7 +66,10 @@ const PrometheusNotifierMenu = new Lang.Class({
 
         // Menu
         this.menu.addAction(_("Alertmanager"), function(event) {
-            let alertmanager_url = Settings.get_string('url') || ''; // TODO: need better default value
+            let base_url = Settings.get_string('url') || ''; // TODO: need better default value
+            let receiver_regex = Settings.get_string('receiver-filter') || ''
+            let alertmanager_url = base_url + '/#/alerts?silenced=false&inhibited=false&unprocessed=false&receiver=' + encodeURI(receiver_regex);
+
             GLib.spawn_command_line_async('xdg-open ' + alertmanager_url);
         });
         //this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -84,7 +87,8 @@ const PrometheusNotifierMenu = new Lang.Class({
 
     _checkAlerts: function() {
         let base_url = Settings.get_string('url') || ''; // TODO: need better default value
-        let api_url = base_url + '/api/v1/alerts';
+        let receiver_regex = Settings.get_string('receiver-filter') || ''
+        let api_url = base_url + '/api/v1/alerts?silenced=false&inhibited=false&unprocessed=false&receiver=' + encodeURI(receiver_regex);
 
         this._httpGetRequestAsync(api_url, function(json) {
             let last_update = new Date((Settings.get_int('last-update') || 0) * 1000);
@@ -98,18 +102,6 @@ const PrometheusNotifierMenu = new Lang.Class({
                 let alert = json['data'][i];
 
                 alert['startsAt'] = new Date(alert['startsAt']); // Convert to date object
-
-                // Skip not active alerts
-                if (alert['status']['state'] != 'active') {
-                    continue;
-                }
-
-                // Filter out alerts by receiver
-                regex = new RegExp(Settings.get_string('receiver-filter') || '');
-                receivers = alert['receivers'].filter(function(s) {return regex.test(s);});
-                if (receivers.length == 0) {
-                    continue; // Skip alert
-                }
 
                 // Send notifications for new alerts
                 if (alert['startsAt'].getTime() > last_update.getTime()) {
