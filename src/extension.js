@@ -100,11 +100,19 @@ let PrometheusNotifierMenuClass = GObject.registerClass({
                 return;
             }
 
-            let filter = this._settings.get_string('label-filter').replace(/"/g, '\\"') || ''
-            let receiver_regex = this._settings.get_string('receiver-filter') || ''
-            let alertmanager_url = base_url + '/#/alerts?silenced=false&inhibited=false&unprocessed=false&filter=' + filter + '&receiver=' + encodeURI(receiver_regex);
+            let label_filter = this._settings.get_string('label-filter') || '';
+            let receiver_filter = this._settings.get_string('receiver-filter') || '';
+            let web_url = base_url + '/#/alerts?silenced=false&inhibited=false&muted=false&active=true';
 
-            GLib.spawn_command_line_async('xdg-open ' + alertmanager_url);
+            if (label_filter !== '') {
+                web_url += '&filter=' + encodeURIComponent('{' + label_filter + '}');
+            }
+
+            if (receiver_filter !== '') {
+                web_url += '&receiver=' + encodeURIComponent(receiver_filter);
+            }
+
+            GLib.spawn_command_line_async('xdg-open ' + web_url);
         }
 
         _checkAlerts() {
@@ -114,17 +122,24 @@ let PrometheusNotifierMenuClass = GObject.registerClass({
                 return;
             }
 
-            let filter = this._settings.get_string('label-filter') || ''
-            let receiver_regex = this._settings.get_string('receiver-filter') || ''
-            let api_url = base_url + '/api/v1/alerts?silenced=false&inhibited=false&unprocessed=false&filter=' + filter + '&receiver=' + encodeURI(receiver_regex);
+            let label_filter = this._settings.get_string('label-filter') || '';
+            let receiver_filter = this._settings.get_string('receiver-filter') || '';
+            let api_url = base_url + '/api/v2/alerts/groups?silenced=false&inhibited=false&muted=false&active=true';
+
+            if (label_filter !== '') {
+                api_url += '&filter=' + encodeURIComponent(label_filter);
+            }
+
+            if (receiver_filter !== '') {
+                api_url += '&receiver=' + encodeURIComponent(receiver_filter);
+            }
 
             this._httpGetRequestAsync(api_url, function(json) {
                 let last_update = new Date((this._settings.get_int('last-update') || 0) * 1000);
                 let alerts_count = 0;
-                let alerts_new
 
-                for (var i = 0; i < json['data'].length; i++) {
-                    let alert = json['data'][i];
+                for (var i = 0; i < json.length; i++) {
+                    let alert = json[i];
 
                     alert['startsAt'] = new Date(alert['startsAt']); // convert to date object
 
