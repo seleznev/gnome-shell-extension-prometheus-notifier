@@ -139,22 +139,26 @@ let PrometheusNotifierMenuClass = GObject.registerClass({
                 let alerts_count = 0;
 
                 for (var i = 0; i < json.length; i++) {
-                    let alert = json[i];
+                    let group = json[i];
 
-                    alert['startsAt'] = new Date(alert['startsAt']); // convert to date object
+                    for (var j = 0; j < group['alerts'].length; j++) {
+                        let alert = group['alerts'][j];
 
-                    // Send notifications for new alerts.
-                    if (alert['startsAt'].getTime() > last_update.getTime()) {
-                        let url = alert['generatorURL'];
-                        let urgency = MessageTray.Urgency.HIGH;
-                        let title = _("[%s] %s").format(alert['labels']['alertname'],
-                                                        alert['annotations']['summary']);
-                        let summary = alert['annotations']['description'];
+                        alert['startsAt'] = new Date(alert['startsAt']); // convert to date object
 
-                        this._sendNotification(title, summary, 'dialog-warning', urgency, url);
+                        // Send notifications for new alerts.
+                        if (alert['startsAt'].getTime() > last_update.getTime()) {
+                            let url = alert['generatorURL'];
+                            let urgency = MessageTray.Urgency.HIGH;
+                            let title = _("[%s] %s").format(alert['labels']['alertname'],
+                                                            alert['annotations']['summary']);
+                            let summary = alert['annotations']['description'];
+
+                            this._sendNotification(title, summary, 'dialog-warning', urgency, url);
+                        }
+
+                        alerts_count++;
                     }
-
-                    alerts_count++;
                 }
 
                 let new_last_update = new Date();
