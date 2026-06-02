@@ -28,7 +28,7 @@ class PrometheusNotifierPrefsWidget extends Adw.PreferencesGroup {
     }
 
     constructor(settings) {
-        super(settings);
+        super({});
 
         // Alertmanager URL
         this.add(new Gtk.Label({ label: '<b>' + _("Alertmanager URL") + '</b>',

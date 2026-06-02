@@ -1,3 +1,8 @@
 #panel .prometheus-notifier-button-warning {
   color: #ff7800;
 }
+
+/* spacing between warning icon and counter label */
+#panel .prometheus-notifier-box.panel-status-indicators-box {
+  spacing: 0;
+}

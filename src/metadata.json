@@ -5,6 +5,6 @@
   "name": "Prometheus Notifier",
   "description": "Simple notifier about alerts from Prometheus",
   "shell-version": [
-    "46"
+    "50"
   ]
 }

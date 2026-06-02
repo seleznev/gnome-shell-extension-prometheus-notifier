@@ -34,14 +34,14 @@ let PrometheusNotifierMenuClass = GObject.registerClass({
     },
     class PrometheusNotifierMenu extends PanelMenu.Button {
         constructor(settings) {
-            super(0.0, _("Prometheus Notifier"));
+            super(0.0, _("Prometheus Notifier"), true);
 
             this._settings = settings;
             this._notifications = {};
 
             // Button (indicator)
             this.box = new St.BoxLayout({
-                style_class: 'panel-status-menu-box'
+                style_class: 'prometheus-notifier-box panel-status-indicators-box'
             });
             this.add_child(this.box);
 
@@ -79,7 +79,7 @@ let PrometheusNotifierMenuClass = GObject.registerClass({
                 this._openAlertmanager();
             }
 
-            return Main.wm.handleWorkspaceScroll(event);
+            return Main.wm.handleWorkspaceScroll?.(event) ?? Clutter.EVENT_PROPAGATE;
         }
 
         vfunc_key_release_event(event) {
