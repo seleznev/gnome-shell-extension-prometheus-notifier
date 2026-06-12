@@ -246,7 +246,7 @@ let PrometheusNotifierMenuClass = GObject.registerClass({
 
                 this.add_style_class_name(warning_style_class);
             } else {
-                this.icon.icon_name = 'emblem-default-symbolic';
+                this.icon.icon_name = 'object-select-symbolic'; // or 'selection-mode-symbolic'?
                 this.label.hide();
 
                 this.remove_style_class_name(warning_style_class);
